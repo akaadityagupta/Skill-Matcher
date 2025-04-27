@@ -20,3 +20,18 @@ exports.getAllEmployees = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch employees' });
   }
 };
+
+exports.deleteEmployee = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedEmployee = await Employee.findByIdAndDelete(id);
+    
+    if (!deletedEmployee) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+    
+    res.json({ message: 'Employee deleted successfully', employee: deletedEmployee });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete employee', details: error.message });
+  }
+};

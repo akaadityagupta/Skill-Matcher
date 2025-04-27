@@ -30,15 +30,12 @@ const AddProject = () => {
         body: JSON.stringify(projectData),
       });
 
-      if (response.ok) {
-        alert('Project added successfully!');
-        setProjectName('');
-        setSkills([{ name: '', level: 'easy' }]);
-      } else {
-        alert('Error adding project');
-      }
+      const data = await response.json();
+      alert('Project added successfully!');
+      setName('');
+      setSkills([{ name: '', level: 'easy' }]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error adding project:', error);
     }
   };
 
@@ -103,7 +100,7 @@ const AddProject = () => {
                   >
                     <option value="easy">Beginner</option>
                     <option value="moderate">Intermediate</option>
-                    <option value="advance">Expert</option>
+                    <option value="advanced">Expert</option>
                   </select>
                 </div>
               </div>

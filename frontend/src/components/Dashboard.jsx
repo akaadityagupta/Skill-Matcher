@@ -21,8 +21,8 @@ const Dashboard = () => {
 
   const menuItems = [
     { id: 'AddEmployee', label: 'Add Employee', icon: '👤', color: 'from-blue-500 to-blue-600' },
-    { id: 'AllEmployees', label: 'All Employees', icon: '👥', color: 'from-green-500 to-green-600' },
     { id: 'AddProject', label: 'Add Project', icon: '📋', color: 'from-purple-500 to-purple-600' },
+    { id: 'AllEmployees', label: 'All Employees', icon: '👥', color: 'from-green-500 to-green-600' },
     { id: 'AllProjects', label: 'All Projects', icon: '📊', color: 'from-orange-500 to-orange-600' },
     { id: 'FindEmployee', label: 'Find Employee', icon: '🔍', color: 'from-pink-500 to-pink-600' }
   ];
