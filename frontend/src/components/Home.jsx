@@ -14,10 +14,10 @@ const Home = () => {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-sky-900 mb-6 animate-fade-in">
-              Skill Matcher
+              Employee Skill Tracker
             </h1>
             <p className="text-xl text-gray-700 leading-relaxed mb-8 max-w-2xl mx-auto">
-              Welcome to the Skill Matcher! This app helps you manage employees and projects
+              Welcome to the Employee Skill Tracker! This app helps you manage employees and projects
               by tracking their skills and matching them with the right tasks. Add employees and projects,
               view all data, and find the perfect match for your project needs.
             </p>

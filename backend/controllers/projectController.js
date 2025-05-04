@@ -36,7 +36,6 @@ exports.deleteProject = async (req, res) => {
   }
 };
 
-
 exports.addNote = async (req, res) => {
   try {
     const { id } = req.params;
@@ -55,7 +54,6 @@ exports.addNote = async (req, res) => {
     res.status(500).json({ error: 'Failed to add note', details: error.message });
   }
 };
-
 
 exports.deleteNote = async (req, res) => {
   try {
@@ -81,4 +79,3 @@ exports.deleteNote = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete note', details: error.message });
   }
 };
-

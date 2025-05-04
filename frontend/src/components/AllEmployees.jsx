@@ -1,10 +1,13 @@
 // AllEmployees.jsx
 import React, { useEffect, useState } from 'react';
+import SkillUpdateForm from './SkillUpdateForm';
 
 const AllEmployees = () => {
   // State management for employees data and loading status
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [showSkillModal, setShowSkillModal] = useState(false);
 
   // Fetch employees data from API on component mount
   useEffect(() => {
@@ -65,6 +68,15 @@ const AllEmployees = () => {
     }
   };
 
+  // Update employee skills
+  const handleUpdateSkills = (updatedEmployee) => {
+    setEmployees(employees.map(emp => 
+      emp._id === updatedEmployee._id ? updatedEmployee : emp
+    ));
+    setShowSkillModal(false);
+    setSelectedEmployee(null);
+  };
+
   return (
     <div className="animate-fade-in">
       {/* Header section with title and employee count */}
@@ -109,15 +121,30 @@ const AllEmployees = () => {
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800">{emp.name}</h3>
                   </div>
-                  <button
-                    onClick={() => handleDeleteEmployee(emp._id)}
-                    className="p-2 text-red-600 hover:text-red-800 hover:bg-red-100 rounded-full transition-colors duration-200"
-                    title="Delete Employee"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </button>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => {
+                        setSelectedEmployee(emp);
+                        setShowSkillModal(true);
+                      }}
+                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                      title="Update Skills"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteEmployee(emp._id)}
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                      title="Delete Employee"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Skills section */}
@@ -145,6 +172,38 @@ const AllEmployees = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Skill Update Modal */}
+      {showSkillModal && selectedEmployee && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  Update Skills for {selectedEmployee.name}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowSkillModal(false);
+                    setSelectedEmployee(null);
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <SkillUpdateForm
+                type="employees"
+                id={selectedEmployee._id}
+                currentSkills={selectedEmployee.skills}
+                onUpdate={handleUpdateSkills}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

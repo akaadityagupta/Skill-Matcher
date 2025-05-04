@@ -1,5 +1,6 @@
 // AllProjects.jsx
 import React, { useEffect, useState } from 'react';
+import SkillUpdateForm from './SkillUpdateForm';
 
 const AllProjects = () => {
   // State management for projects data and loading status
@@ -8,6 +9,7 @@ const AllProjects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [noteDescription, setNoteDescription] = useState('');
   const [expandedNotes, setExpandedNotes] = useState({});
+  const [showSkillModal, setShowSkillModal] = useState(false);
 
   // Fetch projects data from API on component mount
   useEffect(() => {
@@ -108,6 +110,26 @@ const AllProjects = () => {
     }
   };
 
+  // Toggle note completion
+  const handleToggleNote = async (projectId, noteId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/projects/${projectId}/notes/${noteId}/toggle`, {
+        method: 'PATCH',
+      });
+
+      if (response.ok) {
+        const updatedProject = await response.json();
+        setProjects(projects.map(project => 
+          project._id === projectId ? updatedProject : project
+        ));
+      } else {
+        console.error('Failed to toggle note status');
+      }
+    } catch (error) {
+      console.error('Error toggling note status:', error);
+    }
+  };
+
   // Helper function to determine skill level color based on difficulty
   const getSkillLevelColor = (level) => {
     switch (level) {
@@ -126,6 +148,15 @@ const AllProjects = () => {
       case 'advance': return 'Expert';
       default: return level;
     }
+  };
+
+  // Update project skills
+  const handleUpdateSkills = (updatedProject) => {
+    setProjects(projects.map(project => 
+      project._id === updatedProject._id ? updatedProject : project
+    ));
+    setShowSkillModal(false);
+    setSelectedProject(null);
   };
 
   return (
@@ -173,6 +204,19 @@ const AllProjects = () => {
                     <h3 className="text-xl font-semibold text-gray-800">{project.projectName}</h3>
                   </div>
                   <div className="flex space-x-2">
+                    <button
+                      onClick={() => {
+                        setSelectedProject(project);
+                        setShowSkillModal(true);
+                      }}
+                      className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
+                      title="Update Skills"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
+                    </button>
                     <button
                       onClick={() => setSelectedProject(project)}
                       className={`p-2 rounded-full transition-colors duration-200 ${
@@ -240,20 +284,33 @@ const AllProjects = () => {
                       <div className="mt-2 space-y-2 pl-6 border-l-2 border-purple-100">
                         {project.notes.map((note, idx) => (
                           <div key={idx} className="text-sm text-gray-600 group relative">
-                            <p>{note.description}</p>
-                            <div className="flex justify-between items-center mt-1">
-                              <div className="text-xs text-gray-400">
-                                {new Date(note.createdAt).toLocaleDateString()}
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0 pt-1">
+                                <input
+                                  type="checkbox"
+                                  checked={note.completed}
+                                  onChange={() => handleToggleNote(project._id, note._id)}
+                                  className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded transition-colors duration-200"
+                                />
                               </div>
-                              <button
-                                onClick={() => handleDeleteNote(project._id, note._id)}
-                                className="text-gray-400 hover:text-red-600 transition-colors duration-200 opacity-0 group-hover:opacity-100"
-                                title="Delete Note"
-                              >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                              </button>
+                              <div className="flex-1">
+                                <p className={`${note.completed ? 'line-through text-gray-400' : ''}`}>
+                                  {note.description}
+                                </p>
+                                <div className="flex justify-between items-center mt-1">
+                                  <div className="text-xs text-gray-400">
+                                    {new Date(note.createdAt).toLocaleDateString()}
+                                  </div>
+                                  <button
+                                    onClick={() => handleDeleteNote(project._id, note._id)}
+                                    className="text-gray-400 hover:text-red-600 transition-colors duration-200 opacity-0 group-hover:opacity-100"
+                                  >
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -311,6 +368,38 @@ const AllProjects = () => {
               >
                 Save
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Skill Update Modal */}
+      {showSkillModal && selectedProject && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  Update Required Skills for {selectedProject.projectName}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowSkillModal(false);
+                    setSelectedProject(null);
+                  }}
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <SkillUpdateForm
+                type="projects"
+                id={selectedProject._id}
+                currentSkills={selectedProject.requiredSkills}
+                onUpdate={handleUpdateSkills}
+              />
             </div>
           </div>
         </div>
