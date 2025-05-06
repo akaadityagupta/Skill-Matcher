@@ -16,5 +16,8 @@ app.use('/api/employees', require('./routes/employeeRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
 app.use('/api/match', require('./routes/matchRoutes'));
 
+const groupRoutes = require('./routes/groupRoutes');
+app.use('/api/groups', groupRoutes);
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

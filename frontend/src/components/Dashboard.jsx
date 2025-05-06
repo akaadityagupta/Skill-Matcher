@@ -4,6 +4,7 @@ import AllEmployees from './AllEmployees';
 import AddProject from './AddProject';
 import AllProjects from './AllProjects';
 import FindEmployee from './FindEmployee';
+import GroupMember from './GroupMember';
 
 const Dashboard = () => {
   const [activeComponent, setActiveComponent] = useState('AddEmployee');
@@ -14,7 +15,8 @@ const Dashboard = () => {
       AllEmployees: <AllEmployees />,
       AddProject: <AddProject />,
       AllProjects: <AllProjects />,
-      FindEmployee: <FindEmployee />
+      FindEmployee: <FindEmployee />,
+      GroupMember: <GroupMember />
     };
     return components[activeComponent] || <AddEmployee />;
   };
@@ -24,7 +26,8 @@ const Dashboard = () => {
     { id: 'AllEmployees', label: 'All Employees', icon: '👥', color: 'from-green-500 to-green-600' },
     { id: 'AddProject', label: 'Add Project', icon: '📋', color: 'from-purple-500 to-purple-600' },
     { id: 'AllProjects', label: 'All Projects', icon: '📊', color: 'from-orange-500 to-orange-600' },
-    { id: 'FindEmployee', label: 'Find Employee', icon: '🔍', color: 'from-pink-500 to-pink-600' }
+    { id: 'FindEmployee', label: 'Find Employee', icon: '🔍', color: 'from-pink-500 to-pink-600' },
+    { id: 'GroupMember', label: 'Employee Groups', icon: '👥', color: 'bg-gradient-to-r from-emerald-500 to-teal-600' }
   ];
 
   return (

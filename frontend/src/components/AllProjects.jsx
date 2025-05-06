@@ -198,41 +198,27 @@ const AllProjects = () => {
                 {/* Project header with name and icon */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-xl">
+                    <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center text-white text-xl">
                       {project.projectName.charAt(0)}
                     </div>
                     <h3 className="text-xl font-semibold text-gray-800">{project.projectName}</h3>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex items-center space-x-2">
                     <button
                       onClick={() => {
                         setSelectedProject(project);
-                        setShowSkillModal(true);
                       }}
-                      className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors duration-200"
-                      title="Update Skills"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => setSelectedProject(project)}
-                      className={`p-2 rounded-full transition-colors duration-200 ${
-                        selectedProject && selectedProject._id === project._id
-                          ? 'text-purple-600 bg-purple-100'
-                          : 'text-gray-400 hover:text-purple-600 hover:bg-purple-50'
-                      }`}
+                      className="p-2 text-emerald-600 hover:text-emerald-700 transition-colors"
                       title="Add Note"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                        <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
                       </svg>
                     </button>
                     <button
                       onClick={() => handleDeleteProject(project._id)}
-                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors duration-200"
+                      className="p-2 text-red-500 hover:text-red-600 transition-colors"
                       title="Delete Project"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -242,9 +228,26 @@ const AllProjects = () => {
                   </div>
                 </div>
 
-                {/* Required skills section */}
+                {/* Required skills section with update button */}
                 <div className="space-y-3">
-                  <h4 className="text-sm font-medium text-gray-500">Required Skills</h4>
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-medium text-gray-500">Required Skills</h4>
+                    <button
+                      onClick={() => {
+                        setSelectedProject(project);
+                        setShowSkillModal(true);
+                      }}
+                      className="px-3 py-1.5 text-sm font-medium text-emerald-700 hover:text-emerald-800 rounded-md hover:bg-emerald-50 transform hover:scale-105 transition-all duration-200"
+                      title="Update Skills"
+                    >
+                      <span className="flex items-center space-x-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-emerald-700" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                        <span>Update Skills</span>
+                      </span>
+                    </button>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     {project.requiredSkills.map((skill, idx) => (
                       <span 

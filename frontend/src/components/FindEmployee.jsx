@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const FindEmployee = () => {
   // State management for projects, selected project, matched employees, loading state, and errors
@@ -7,6 +8,9 @@ const FindEmployee = () => {
   const [matchedEmployees, setMatchedEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [groupName, setGroupName] = useState('');
+  const [isCreatingGroup, setIsCreatingGroup] = useState(false);
 
   // Fetch all projects when component mounts
   useEffect(() => {
@@ -56,6 +60,44 @@ const FindEmployee = () => {
       console.error('Error fetching matches:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleEmployeeSelect = (employeeId) => {
+    setSelectedEmployees(prev => {
+      if (prev.includes(employeeId)) {
+        return prev.filter(id => id !== employeeId);
+      } else {
+        return [...prev, employeeId];
+      }
+    });
+  };
+
+  const handleCreateGroup = async () => {
+    if (!groupName.trim() || selectedEmployees.length === 0) {
+      setError('Please enter a group name and select at least one employee');
+      return;
+    }
+
+    try {
+      setIsCreatingGroup(true);
+      const response = await axios.post('http://localhost:5000/api/groups', {
+        name: groupName,
+        members: selectedEmployees
+      });
+
+      // Reset form
+      setGroupName('');
+      setSelectedEmployees([]);
+      setError('');
+      
+      // Show success message
+      alert('Group created successfully!');
+    } catch (err) {
+      setError('Failed to create group');
+      console.error(err);
+    } finally {
+      setIsCreatingGroup(false);
     }
   };
 
@@ -164,11 +206,19 @@ const FindEmployee = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {matchedEmployees.map((emp) => (
                 <div key={emp._id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg flex items-center justify-center text-white text-xl">
-                      {emp.name.charAt(0)}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg flex items-center justify-center text-white text-xl">
+                        {emp.name.charAt(0)}
+                      </div>
+                      <h4 className="text-lg font-semibold text-gray-800">{emp.name}</h4>
                     </div>
-                    <h4 className="text-lg font-semibold text-gray-800">{emp.name}</h4>
+                    <input
+                      type="checkbox"
+                      checked={selectedEmployees.includes(emp._id)}
+                      onChange={() => handleEmployeeSelect(emp._id)}
+                      className="h-5 w-5 text-pink-500 rounded focus:ring-pink-500"
+                    />
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {emp.skills.map((skill, idx) => (
@@ -183,6 +233,41 @@ const FindEmployee = () => {
                 </div>
               ))}
             </div>
+
+            {/* Group Creation Form */}
+            {selectedEmployees.length > 0 && (
+              <div className="mt-8 bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">Create Group ({selectedEmployees.length} employees selected)</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Group Name</label>
+                    <input
+                      type="text"
+                      value={groupName}
+                      onChange={(e) => setGroupName(e.target.value)}
+                      placeholder="Enter group name..."
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all duration-200"
+                    />
+                  </div>
+                  <button
+                    onClick={handleCreateGroup}
+                    disabled={isCreatingGroup || !groupName.trim()}
+                    className={`w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 ${
+                      (isCreatingGroup || !groupName.trim()) ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                  >
+                    {isCreatingGroup ? (
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Creating Group...</span>
+                      </div>
+                    ) : (
+                      'Create Group'
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
